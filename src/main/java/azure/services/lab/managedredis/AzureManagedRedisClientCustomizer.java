@@ -15,16 +15,16 @@ import io.lettuce.core.SslVerifyMode;
 /**
  * PROJECT     azure-services-lab-springboot
  *
- * @name       AzureManagedRedisLettuceCustomizer.java
- * @desc       Azure Managed Redis Lettuce Client 의 연결 구성을 커스터마이징한다.
+ * @name       AzureManagedRedisClientCustomizer.java
+ * @desc       Azure Managed Redis Client 의 연결 구성을 커스터마이징한다.
  * @author     JooHyeong.Park
  * @since      2026-09-28
  */
 @Configuration(proxyBeanMethods = false)
-public class AzureManagedRedisLettuceCustomizer {
+public class AzureManagedRedisClientCustomizer {
 
   @Bean
-  public LettuceClientConfigurationBuilderCustomizer azureManagedRedisLettuceCustomizer(
+  public LettuceClientConfigurationBuilderCustomizer lettuceClientCustomizer(
       @Value("${spring.data.redis.ssl.enabled:false}") boolean sslEnabled) {
     return builder -> {
       /*
