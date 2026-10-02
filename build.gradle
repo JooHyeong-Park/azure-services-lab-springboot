@@ -1,0 +1,55 @@
+plugins {
+  id 'java'
+  id 'org.springframework.boot' version '4.1.1'
+  id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'azure.services.lab'
+version = '1.0.0-SNAPSHOT'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+
+  /*
+   * Dependencies for Azure Managed Redis :: START
+   */
+
+  // [Spring Cloud Azure Dependencies]
+  // - Compatibility
+  //   - Spring Boot 4.0.x -> Spring Cloud Azure 7.4.0
+  //   - Spring Boot 3.5.x -> Spring Cloud Azure 6.5.0
+  // - Reference
+  //   - Spring Cloud Azure developer guide
+  //     https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/developer-guide-overview
+  //   - Spring Cloud Azure Dependencies (BOM Versions)
+  //     https://mvnrepository.com/artifact/com.azure.spring/spring-cloud-azure-dependencies
+  implementation platform('com.azure.spring:spring-cloud-azure-dependencies:7.4.0')
+
+  implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+  implementation 'com.azure.spring:spring-cloud-azure-starter-data-redis-lettuce'
+
+  /*
+   * Dependencies for Azure Managed Redis :: END
+   */
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('bootJar') {
+  archiveFileName = "azure-services-lab-springboot.jar"
+}
+
+tasks.named('jar') {
+  enabled = false
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}

@@ -1,0 +1,23 @@
+pluginManagement {
+  repositories {
+    maven {
+      // gradlePluginPortal()
+      url = uri("https://plugins.gradle.org/m2/")
+    }
+    maven {
+      // mavenCentral()
+      url = uri("https://repo.maven.apache.org/maven2/")
+    }
+  }
+}
+
+dependencyResolutionManagement {
+  repositories {
+    maven {
+      // mavenCentral()
+      url = uri("https://repo.maven.apache.org/maven2/")
+    }
+  }
+}
+
+rootProject.name = 'azure-services-lab-springboot'

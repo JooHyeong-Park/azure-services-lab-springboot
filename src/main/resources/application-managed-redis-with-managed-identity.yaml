@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: azure-services-lab-springboot
+
+  ### [ spring-boot-starter-data-redis 전용 설정 ]
+  data:
+    redis:
+      host: (Azre Managed Redis URL)
+      ### Azure Managed Redis 의 port, 고정값 `10000` 지정
+      port: 10000
+      ### [ Azure Managed Redis ACL (Access Control List) 에 설정된 username ]
+      ### - Azure Managed Redis 의 Authentication -> Redis Users -> Username 에서 정확한 값을 확인 후 설정할 것
+      ### - Service Principal/Managed Identity 의  Object ID 나 Principal ID 등과 혼동하지 말 것
+      username: (Azure Managed Redis ACL username)
+      ### Redis 에 대한 연결을 기다리는 최대 시간. 필요시 수정할 것
+      connect-timeout: 10s
+      ### Redis 명령 응답을 기다리는 최대 시간. 필요시 수정할 것
+      timeout: 10s
+      ssl:
+        enabled: true
+      azure:
+        ### Microsoft Entra ID 인증 기반 인증 -> password 불필요
+        passwordless-enabled: true
+        profile:
+          tenant-id: (Azure Tenant ID)
+        credential:
+          ########## (Azure 리소스 전용) User Assigned Managed Identity 설정 ##########
+          ### [ Azure credential :: client ID ]
+          ### - Azure 리소스에 연결된 User Assigned Managed Identity 의 Client ID
+          client-id: (User Assigned Managed Identity client ID)
+
+### [ application.azure.managed-redis ]
+### - 해당 설정은 SpringBoot 공식 설정이 아닌, `Application 전용 Custom 설정`
+###   필요시 application.azure.managed-redis 가 아닌 다른 설정으로 지정해도 무방함
+application:
+  azure:
+    managed-redis:
+      ########## Redis 전용 기본 TTL (duration, 만료 시간) 설정 ##########
+      ### - Redis 는 key-vaule Data 저장시 TTL 을 설정하여 일정 시간 경과시 자동 삭제되게 할 수 있음
+      ### - @see AzureManagedRedisStringClient.java
+      ###   -> 명시적인 duration 없이 `save` 메서드 호출시 해당 duration 값이 자동 지정되도록 구현함
+      ###   -> Redis 에 영구 저장되어야 하는 key-value 는 `savePermanently` 메서드를 사용해야 함
+      ###   ->  `PT1800S` -> 예시 설정으로 30분(= 1800초)
+      default-duration: PT1800S
+
+      ########## Redis ACL 에 설정된 key-prefix 설정 ##########
+      ### - key-prefix 는 하나의 Managed Redis 를 여러 애플리케이션이 공유할 때,
+      ###   애플리케이션간 데이터 침범을 막기 위해 키 이름 앞에 붙이는 격리용 접두사입
+      ### - Azure Managed Redis 는 Microsoft Entra ID 기반으로 인증되며,
+      ###   각 Entra ID 별로 Redis ACL 에 설정된 key pattern 에 대해서만 접근 가능
+      ###   따라서 이 prefix 값은 Redis ACL 의 key pattern 과 반드시 일치해야 함
+      ### - @see AzureManagedRedisStringClient.java
+      ###   -> key-prefix 가 적용된 기본적인 연동 예제를 구현함
+      key-prefix: 'DEV:10000:AppName:'
